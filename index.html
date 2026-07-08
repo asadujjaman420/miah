@@ -288,7 +288,7 @@
     <div class="hero-actions">
       <a class="btn primary" href="Md_Asadujjaman_Miah_CV.pdf" target="_blank" rel="noopener">Download CV ↓</a>
       <a class="btn" href="mailto:sifata425@gmail.com">Email</a>
-      <a class="btn" href="https://scholar.google.com/scholar?q=Md.+Asadujjaman+Miah" target="_blank" rel="noopener">Google Scholar</a>
+      <a class="btn" href="https://scholar.google.com/citations?user=ZhM5fREAAAAJ&hl=en" target="_blank" rel="noopener">Google Scholar</a>
       <a class="btn" href="https://github.com/asadujjaman420" target="_blank" rel="noopener">GitHub</a>
       <a class="btn" href="https://www.linkedin.com/in/md-asadujjaman-miah-b12214217/" target="_blank" rel="noopener">LinkedIn</a>
     </div>
@@ -535,14 +535,14 @@
     <div class="foot-links">
       <a href="mailto:sifata425@gmail.com">sifata425@gmail.com</a>
       <a href="tel:+8801402394778">+880 1402 394778</a>
-      <a href="https://scholar.google.com/scholar?q=Md.+Asadujjaman+Miah" target="_blank" rel="noopener">Google Scholar</a>
+      <a href="https://scholar.google.com/citations?user=ZhM5fREAAAAJ&hl=en" target="_blank" rel="noopener">Google Scholar</a>
       <a href="https://github.com/asadujjaman420" target="_blank" rel="noopener">GitHub</a>
       <a href="https://www.linkedin.com/in/md-asadujjaman-miah-b12214217/" target="_blank" rel="noopener">LinkedIn</a>
       <a href="Md_Asadujjaman_Miah_CV.pdf" target="_blank" rel="noopener">Download CV ↓</a>
     </div>
     <div class="foot-base">
       <span>© <span id="yr"></span> Md. Asadujjaman Miah</span>
-      <span>Built around the secant method · x³ − 2x − 5 = 0</span>
+      <span>Perpendicular &amp; Extended-Secant methods · f(x) = (x−1)³ − 1</span>
     </div>
   </div>
 </footer>
@@ -566,14 +566,16 @@
     document.querySelectorAll('.reveal').forEach(el=>el.classList.add('in'));
   }
 
-  // ---- Hero: secant-method convergence on f(x) = x^3 - 2x - 5 ----
+  // ---- Hero: Perpendicular Method & Extension of Secant Method (Miah et al., AMC 2026) ----
+  // Example 1 of the paper: f(x) = (x-1)^3 - 1, root x* = 2
   (function(){
     const canvas = document.getElementById('plot');
     const ctx = canvas.getContext('2d');
-    const f = x => x*x*x - 2*x - 5;         // root ~ 2.0945514815
-    const ROOT = 2.0945514815;
-    const X0 = 3.0, X1 = 1.5;               // seeds -> smooth convergence
-    const domain = [0.55, 3.35];
+    const N = 3;                            // odd power for the Extension of Secant Method
+    const f = x => Math.pow(x-1,3) - 1;     // root x* = 2
+    const ROOT = 2.0;
+    const SEED = [1.0, 3.0];                // seeds with f(1)<0, f(3)>0
+    const domain = [0.62, 3.35];
     let W=0, H=0, dpr=1;
     const css = getComputedStyle(document.documentElement);
     const CURVE = (css.getPropertyValue('--hero-curve')||'#7C86FF').trim();
@@ -634,90 +636,129 @@
     }
     function dot(x,y,r,color){ ctx.beginPath(); ctx.arc(sx(x),sy(y),r,0,Math.PI*2); ctx.fillStyle=color; ctx.fill(); }
 
-    // build secant iterate sequence
-    function buildSteps(){
-      const xs=[X0,X1]; 
-      for(let k=1;k<8;k++){
-        const a=xs[k-1], b=xs[k], fa=f(a), fb=f(b);
-        if(Math.abs(fb-fa)<1e-12) break;
-        const c=b-fb*(b-a)/(fb-fa);
-        xs.push(c);
-        if(Math.abs(c-ROOT)<1e-4) break;
+    // ---- iterate builders (two most-recent points, as in the paper) ----
+    function buildPM(seed){
+      const xs=[seed[0],seed[1]];
+      for(let k=1;k<7;k++){
+        const xp=xs[k-1], xc=xs[k];
+        const m1=(f(xc)-f(xp))/(xc-xp);
+        if(!isFinite(m1)||m1===0) break;
+        const c1=f(xc)-m1*xc, m2=-1/m1, c2=xc/m1;   // secant & perpendicular through (xc,0)
+        const xn=(c2-c1)/(m1-m2);
+        if(!isFinite(xn)) break;
+        xs.push(xn);
+        if(Math.abs(xn-ROOT)<3e-3) break;
       }
       return xs;
     }
-    const steps = buildSteps();
-
-    // animation state
-    let phase=0;            // index of current secant line being drawn
-    let t0=null;
-    const STEP_MS=1050, HOLD_MS=2400, FADE_MS=900;
-
-    function drawSecant(a,b,alpha){
-      ctx.globalAlpha=alpha;
-      const fa=f(a), fb=f(b);
-      // chord extended a touch
-      ctx.beginPath();
-      ctx.moveTo(sx(a),sy(fa)); ctx.lineTo(sx(b),sy(fb));
-      // continue to axis crossing
-      if(Math.abs(fb-fa)>1e-12){
-        const c=b-fb*(b-a)/(fb-fa);
-        ctx.lineTo(sx(c),sy(0));
+    function buildESM(seed){
+      const xs=[seed[0],seed[1]];
+      for(let k=1;k<7;k++){
+        const xp=xs[k-1], xc=xs[k], fp=f(xp), fc=f(xc), d=fp-fc;
+        if(Math.abs(d)<1e-14) break;
+        const val=Math.pow(xc,N)-fc*(Math.pow(xp,N)-Math.pow(xc,N))/d;
+        const xn=Math.cbrt(val);                     // n-th power formulation, n=3
+        if(!isFinite(xn)) break;
+        xs.push(xn);
+        if(Math.abs(xn-ROOT)<3e-3) break;
       }
-      ctx.strokeStyle='rgba(234,238,249,0.55)'; ctx.lineWidth=1.3;
-      ctx.setLineDash([5,4]); ctx.stroke(); ctx.setLineDash([]);
-      dot(a,fa,3.2,'rgba(234,238,249,0.85)');
-      dot(b,fb,3.2,'rgba(234,238,249,0.85)');
-      ctx.globalAlpha=1;
+      return xs;
+    }
+    const phases=[
+      {kind:'PM',  label:'PERPENDICULAR METHOD',        seq:buildPM(SEED)},
+      {kind:'ESM', label:'EXTENSION OF SECANT · n = 3', seq:buildESM(SEED)}
+    ];
+
+    // ---- drawing helpers ----
+    const C_SECANT='rgba(234,238,249,0.55)';
+    const C_AMBER ='rgba(242,178,76,0.92)';
+    const C_AMBER_SOFT='rgba(242,178,76,0.35)';
+    const C_POINT ='rgba(234,238,249,0.92)';
+
+    function clipPlot(){ ctx.save(); ctx.beginPath(); ctx.rect(view.plotLeft,view.plotTop,view.plotRight-view.plotLeft,view.plotBottom-view.plotTop); ctx.clip(); }
+    function line(m,b,alpha,color,dash){
+      clipPlot(); ctx.globalAlpha=alpha; ctx.strokeStyle=color; ctx.lineWidth=1.4; ctx.setLineDash(dash||[]);
+      ctx.beginPath(); ctx.moveTo(sx(domain[0]),sy(m*domain[0]+b)); ctx.lineTo(sx(domain[1]),sy(m*domain[1]+b)); ctx.stroke();
+      ctx.setLineDash([]); ctx.globalAlpha=1; ctx.restore();
+    }
+    function paramCurve(fn,alpha,color){
+      clipPlot(); ctx.globalAlpha=alpha; ctx.strokeStyle=color; ctx.lineWidth=1.7; ctx.lineCap='round'; ctx.setLineDash([1,5]);
+      ctx.beginPath();
+      for(let i=0;i<=140;i++){ const x=domain[0]+(domain[1]-domain[0])*i/140; const px=sx(x),py=sy(fn(x)); i?ctx.lineTo(px,py):ctx.moveTo(px,py); }
+      ctx.stroke(); ctx.setLineDash([]); ctx.lineCap='butt'; ctx.globalAlpha=1; ctx.restore();
+    }
+    function ring(x,y,r,alpha,color){ ctx.globalAlpha=alpha; ctx.beginPath(); ctx.arc(sx(x),sy(y),r,0,Math.PI*2); ctx.strokeStyle=color; ctx.lineWidth=1.8; ctx.stroke(); ctx.globalAlpha=1; }
+    function vseg(x,y0,y1,alpha,color){ clipPlot(); ctx.globalAlpha=alpha; ctx.strokeStyle=color; ctx.lineWidth=1.2; ctx.setLineDash([3,3]); ctx.beginPath(); ctx.moveTo(sx(x),sy(y0)); ctx.lineTo(sx(x),sy(y1)); ctx.stroke(); ctx.setLineDash([]); ctx.globalAlpha=1; ctx.restore(); }
+
+    // draw the geometry that produces seq[k+1] from (seq[k-1], seq[k])
+    function drawStep(ph,k,alpha){
+      const seq=ph.seq, xp=seq[k-1], xc=seq[k], xn=seq[k+1];
+      if(xn===undefined) return;
+      const fp=f(xp), fc=f(xc);
+      const m1=(fc-fp)/(xc-xp), c1=fc-m1*xc;
+      if(ph.kind==='PM'){
+        const m2=-1/m1, b2=-m2*xc, yInt=m1*xn+c1;
+        line(m1,c1,alpha*0.55,C_SECANT,[5,4]);         // secant line through the two points
+        line(m2,b2,alpha*0.90,C_AMBER,[4,4]);          // perpendicular through (xc,0) — the signature
+        ring(xn,yInt,4.2,alpha,C_AMBER);               // secant ∩ perpendicular
+        vseg(xn,yInt,0,alpha*0.6,C_AMBER_SOFT);        // drop to the next iterate
+      } else {
+        const up=Math.pow(xp,N), uc=Math.pow(xc,N), sU=(fp-fc)/(up-uc);
+        line(m1,c1,alpha*0.40,C_SECANT,[5,4]);         // plain secant, for reference
+        paramCurve(x=>fc+sU*(Math.pow(x,N)-uc), alpha*0.95, C_AMBER); // ESM parametric line (crosses 0 at xn)
+      }
+      ctx.globalAlpha=alpha; dot(xp,fp,3.1,C_POINT); dot(xc,fc,3.1,C_POINT); ctx.globalAlpha=1;
+      dot(xn,0,4.0,C_AMBER);                           // new iterate on the axis
     }
 
+    function rootMark(pulseT){
+      const p=1+0.32*Math.sin(pulseT/230);
+      ctx.beginPath(); ctx.arc(sx(ROOT),sy(0),9*p,0,Math.PI*2); ctx.fillStyle='rgba(242,178,76,0.16)'; ctx.fill();
+      dot(ROOT,0,5.2,AMBER);
+      ctx.font='500 12px "IBM Plex Mono", monospace'; ctx.fillStyle=C_AMBER; ctx.textAlign='center';
+      ctx.fillText('x* = 2', sx(ROOT), sy(0)+22); ctx.textAlign='left';
+    }
+    function methodLabel(ph){
+      ctx.textAlign='right';
+      ctx.font='600 12px "IBM Plex Mono", monospace'; ctx.fillStyle='rgba(242,178,76,0.9)';
+      ctx.fillText(ph.label, view.plotRight-4, view.plotTop+16);
+      ctx.font='400 11px "IBM Plex Mono", monospace'; ctx.fillStyle='rgba(152,164,198,0.85)';
+      ctx.fillText('f(x) = (x−1)³ − 1', view.plotRight-4, view.plotTop+32);
+      ctx.textAlign='left';
+    }
+
+    let state={pi:0,t0:null};
+    const STEP_MS=1000, HOLD_MS=1900, FADE_MS=700;
+
     function frame(ts){
-      if(t0===null) t0=ts;
-      const elapsed=ts-t0;
+      if(state.t0===null) state.t0=ts;
+      const el=ts-state.t0;
       ctx.clearRect(0,0,W,H);
       drawGrid(); drawCurve();
-
-      const totalDraw=(steps.length-2)*STEP_MS;
-      let done=false;
-
-      if(elapsed < totalDraw){
-        const idx=Math.floor(elapsed/STEP_MS);
-        const local=(elapsed%STEP_MS)/STEP_MS;
-        // completed secants faint
-        for(let i=0;i<idx;i++){ drawSecant(steps[i],steps[i+1], 0.28); }
-        // current secant fades in
-        drawSecant(steps[idx],steps[idx+1], Math.min(1,local*1.6));
-        // iterate markers on axis
-        for(let i=2;i<=idx+2 && i<steps.length;i++){ dot(steps[i],0,3.4,'rgba(124,134,255,0.9)'); }
+      const ph=phases[state.pi];
+      const nSteps=Math.max(1, ph.seq.length-2);
+      methodLabel(ph);
+      const totalDraw=nSteps*STEP_MS;
+      if(el<totalDraw){
+        const idx=Math.floor(el/STEP_MS);                 // current step (0-based)
+        const local=(el%STEP_MS)/STEP_MS;
+        for(let kk=1;kk<=idx;kk++) drawStep(ph,kk,0.22);   // earlier steps stay faint
+        drawStep(ph, idx+1, Math.min(1,0.15+local*1.4));   // current step reveals
       } else {
-        // converged: hold, pulse root, then fade & restart
-        const after=elapsed-totalDraw;
-        for(let i=0;i<steps.length-1;i++){ drawSecant(steps[i],steps[i+1], 0.16); }
-        const pulse=1+0.35*Math.sin(after/230);
-        // glow
-        ctx.beginPath(); ctx.arc(sx(ROOT),sy(0),9*pulse,0,Math.PI*2);
-        ctx.fillStyle='rgba(242,178,76,0.18)'; ctx.fill();
-        dot(ROOT,0,5.2,AMBER);
-        // label
-        ctx.font='500 12px "IBM Plex Mono", monospace';
-        ctx.fillStyle='rgba(242,178,76,0.95)';
-        ctx.textAlign='center';
-        ctx.fillText('x* ≈ 2.0946', sx(ROOT), sy(0)+24);
-        if(after > HOLD_MS+FADE_MS){ done=true; }
+        const after=el-totalDraw;
+        for(let kk=1;kk<=nSteps;kk++) drawStep(ph,kk,0.14);
+        rootMark(after);
+        if(after>HOLD_MS+FADE_MS){ state.pi=(state.pi+1)%phases.length; state.t0=null; }
       }
-
-      if(done){ t0=null; requestAnimationFrame(frame); }
-      else requestAnimationFrame(frame);
+      requestAnimationFrame(frame);
     }
 
     function staticConverged(){
-      ctx.clearRect(0,0,W,H);
-      drawGrid(); drawCurve();
-      for(let i=0;i<steps.length-1;i++){ drawSecant(steps[i],steps[i+1], 0.3); }
-      dot(ROOT,0,5.2,AMBER);
-      ctx.font='500 12px "IBM Plex Mono", monospace';
-      ctx.fillStyle='rgba(242,178,76,0.95)'; ctx.textAlign='center';
-      ctx.fillText('x* ≈ 2.0946', sx(ROOT), sy(0)+24);
+      ctx.clearRect(0,0,W,H); drawGrid(); drawCurve();
+      const ph=phases[0]; methodLabel(ph);
+      const nSteps=Math.max(1,ph.seq.length-2);
+      for(let kk=1;kk<=nSteps;kk++) drawStep(ph,kk,0.20);
+      rootMark(0);
     }
 
     function start(){ resize(); if(reduce){ staticConverged(); } else { requestAnimationFrame(frame); } }
