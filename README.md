@@ -31,10 +31,3 @@ Once deployed via GitHub Pages: `https://<username>.github.io/<repo>/`
 - Fully responsive, keyboard-focusable, and respects `prefers-reduced-motion`
   (the animation freezes on the converged Perpendicular-Method state).
 
-## To update
-- **Add a publication:** copy one `.pub` block inside the relevant `.pub-group`
-  in `index.html` and edit the tag, title, and venue.
-- **Swap the CV:** replace `Md_Asadujjaman_Miah_CV.pdf` (keep the same filename).
-- **Links:** the Google Scholar buttons point to your profile
-  (`scholar.google.com/citations?user=ZhM5fREAAAAJ`); GitHub, LinkedIn, and email are
-  wired in the hero and footer.
