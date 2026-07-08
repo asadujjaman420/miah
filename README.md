@@ -6,7 +6,7 @@ neural networks (PINNs), integral equations with discontinuous kernels, and prec
 computation (CESTAC / CADNA).
 
 ## Live site
-Once deployed via GitHub Pages: `https://<username>.github.io/<repo>/`
+Once deployed via GitHub Pages: `https://asadujjaman420.github.io/miah/`
 
 ## Repository structure
 - `index.html` — the full single-page portfolio (all CSS + JS inline, no build step)
