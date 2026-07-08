@@ -1,0 +1,734 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Md. Asadujjaman Miah — Applied Mathematics</title>
+<meta name="description" content="Academic portfolio of Md. Asadujjaman Miah, final-year Applied Mathematics student at the University of Dhaka. Research in numerical root-finding, physics-informed neural networks, and integral equations with guaranteed precision." />
+<meta property="og:title" content="Md. Asadujjaman Miah — Applied Mathematics" />
+<meta property="og:description" content="Numerical methods, PINNs, and integral-equation solvers with guaranteed precision. Q1 Elsevier publication, collaborations with OIST and TU Delft." />
+<meta property="og:type" content="website" />
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%230B1226'/%3E%3Cpath d='M4 22 C10 22 11 8 16 8 C21 8 22 22 28 22' fill='none' stroke='%237C86FF' stroke-width='2.2' stroke-linecap='round'/%3E%3Cline x1='4' y1='19' x2='28' y2='19' stroke='%23394264' stroke-width='1'/%3E%3Ccircle cx='19.4' cy='19' r='2.6' fill='%23F2B24C'/%3E%3C/svg%3E" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400;1,6..72,500&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    --paper:#EEF1F7;
+    --surface:#FFFFFF;
+    --ink:#0E1B33;
+    --graphite:#55617A;
+    --graphite-soft:#7A869E;
+    --line:#DCE2ED;
+    --line-strong:#C6CEDE;
+    --indigo:#3F3AE6;
+    --indigo-soft:#EBEBFC;
+    --root:#C9852A;
+    --root-soft:#FBEFD9;
+    --hero-bg:#0B1226;
+    --hero-bg-2:#0E1631;
+    --hero-ink:#EAEEF9;
+    --hero-sub:#98A4C6;
+    --hero-line:rgba(255,255,255,0.07);
+    --hero-curve:#7C86FF;
+    --hero-root:#F2B24C;
+    --shadow:0 1px 2px rgba(14,27,51,.05), 0 12px 30px -18px rgba(14,27,51,.28);
+    --maxw:980px;
+    --display:"Space Grotesk", system-ui, sans-serif;
+    --serif:"Newsreader", Georgia, serif;
+    --mono:"IBM Plex Mono", ui-monospace, monospace;
+  }
+
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;
+    background:var(--paper);
+    color:var(--ink);
+    font-family:var(--serif);
+    font-size:18px;
+    line-height:1.62;
+    -webkit-font-smoothing:antialiased;
+    text-rendering:optimizeLegibility;
+  }
+  a{color:var(--indigo);text-decoration:none;}
+  a:hover{text-decoration:underline;text-underline-offset:3px;}
+  ::selection{background:var(--root);color:#fff;}
+
+  .mono{font-family:var(--mono);}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:0 28px;}
+
+  /* ---------- NAV ---------- */
+  .nav{
+    position:sticky;top:0;z-index:60;
+    background:rgba(238,241,247,.82);
+    backdrop-filter:saturate(160%) blur(10px);
+    border-bottom:1px solid transparent;
+    transition:border-color .3s ease, background .3s ease;
+  }
+  .nav.stuck{border-bottom:1px solid var(--line);}
+  .nav-inner{
+    max-width:var(--maxw);margin:0 auto;padding:14px 28px;
+    display:flex;align-items:center;justify-content:space-between;gap:16px;
+  }
+  .nav-name{font-family:var(--display);font-weight:600;font-size:.95rem;letter-spacing:-.01em;color:var(--ink);}
+  .nav-name span{color:var(--graphite-soft);font-weight:400;}
+  .nav-links{display:flex;gap:26px;align-items:center;}
+  .nav-links a{
+    font-family:var(--mono);font-size:.74rem;letter-spacing:.06em;text-transform:uppercase;
+    color:var(--graphite);text-decoration:none;transition:color .18s ease;
+  }
+  .nav-links a:hover{color:var(--ink);}
+  .nav-links a.cv{
+    color:var(--ink);border:1px solid var(--line-strong);border-radius:999px;
+    padding:6px 13px;transition:border-color .18s ease, background .18s ease;
+  }
+  .nav-links a.cv:hover{border-color:var(--ink);background:var(--ink);color:#fff;}
+  @media(max-width:640px){ .nav-links a:not(.cv){display:none;} }
+
+  /* ---------- HERO ---------- */
+  .hero{
+    position:relative;overflow:hidden;
+    background:radial-gradient(120% 90% at 78% 8%, var(--hero-bg-2) 0%, var(--hero-bg) 62%);
+    color:var(--hero-ink);
+    border-bottom:1px solid #0a0f22;
+  }
+  #plot{position:absolute;inset:0;width:100%;height:100%;display:block;}
+  .hero-veil{
+    position:absolute;inset:0;pointer-events:none;
+    background:linear-gradient(180deg, rgba(11,18,38,.15) 0%, rgba(11,18,38,.55) 68%, rgba(11,18,38,.9) 100%);
+  }
+  .hero-inner{
+    position:relative;z-index:2;max-width:var(--maxw);margin:0 auto;
+    padding:104px 28px 76px;
+  }
+  .eyebrow{
+    font-family:var(--mono);font-size:.76rem;letter-spacing:.22em;text-transform:uppercase;
+    color:var(--hero-sub);margin:0 0 22px;
+    display:flex;align-items:center;gap:12px;flex-wrap:wrap;
+  }
+  .eyebrow .tick{width:26px;height:1px;background:var(--hero-curve);opacity:.7;}
+  .hero h1{
+    font-family:var(--display);font-weight:600;
+    font-size:clamp(2.5rem,7vw,4.6rem);line-height:1.02;letter-spacing:-.03em;
+    margin:0;color:#fff;
+  }
+  .hero .lede{
+    font-family:var(--serif);font-size:clamp(1.12rem,2.2vw,1.42rem);line-height:1.5;
+    color:var(--hero-ink);max-width:46ch;margin:24px 0 0;font-weight:400;
+  }
+  .hero .lede em{font-style:italic;color:var(--hero-curve);}
+  .hero-actions{display:flex;flex-wrap:wrap;gap:12px;margin-top:34px;}
+  .btn{
+    display:inline-flex;align-items:center;gap:8px;
+    font-family:var(--mono);font-size:.8rem;letter-spacing:.04em;
+    padding:11px 17px;border-radius:999px;border:1px solid rgba(255,255,255,.22);
+    color:var(--hero-ink);text-decoration:none;transition:all .18s ease;
+  }
+  .btn:hover{text-decoration:none;border-color:rgba(255,255,255,.5);background:rgba(255,255,255,.06);transform:translateY(-1px);}
+  .btn.primary{background:var(--hero-curve);border-color:var(--hero-curve);color:#0B1226;font-weight:500;}
+  .btn.primary:hover{background:#98A0FF;border-color:#98A0FF;}
+  .hero-stats{
+    display:grid;grid-template-columns:repeat(4,1fr);gap:1px;
+    margin-top:56px;background:var(--hero-line);border:1px solid var(--hero-line);border-radius:12px;overflow:hidden;
+  }
+  .stat{background:rgba(255,255,255,.015);padding:20px 18px;}
+  .stat .num{font-family:var(--display);font-weight:600;font-size:1.55rem;color:#fff;letter-spacing:-.02em;line-height:1;}
+  .stat .num .accent{color:var(--hero-root);}
+  .stat .lab{font-family:var(--mono);font-size:.68rem;letter-spacing:.09em;text-transform:uppercase;color:var(--hero-sub);margin-top:9px;}
+  @media(max-width:760px){ .hero-stats{grid-template-columns:repeat(2,1fr);} }
+
+  /* ---------- SECTIONS ---------- */
+  .block{padding:78px 0;border-top:1px solid var(--line);}
+  .block:first-of-type{border-top:none;}
+  .sec-head{display:flex;align-items:baseline;gap:16px;margin:0 0 34px;}
+  .sec-num{font-family:var(--mono);font-size:.78rem;color:var(--root);letter-spacing:.05em;padding-top:.35em;}
+  .sec-title{font-family:var(--display);font-weight:600;font-size:clamp(1.5rem,3.4vw,2.05rem);letter-spacing:-.02em;margin:0;color:var(--ink);}
+
+  .prose{font-size:1.12rem;color:#25324b;max-width:64ch;}
+  .prose p{margin:0 0 18px;}
+  .prose p:last-child{margin-bottom:0;}
+  .prose strong{color:var(--ink);font-weight:600;}
+
+  /* ---------- SKILLS ---------- */
+  .skill-grid{display:grid;grid-template-columns:1fr 1fr;gap:26px;}
+  @media(max-width:680px){ .skill-grid{grid-template-columns:1fr;} }
+  .skill-card{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:24px;box-shadow:var(--shadow);}
+  .skill-card h3{font-family:var(--mono);font-size:.72rem;letter-spacing:.14em;text-transform:uppercase;color:var(--graphite);margin:0 0 16px;}
+  .chips{display:flex;flex-wrap:wrap;gap:9px;}
+  .chip{
+    font-family:var(--display);font-size:.86rem;font-weight:500;
+    padding:6px 13px;border-radius:8px;background:var(--paper);border:1px solid var(--line);color:#2a3650;
+  }
+  .chip.code{font-family:var(--mono);font-weight:400;font-size:.8rem;background:#0E1631;color:#c8d0ef;border-color:#0E1631;}
+
+  /* ---------- TIMELINE ---------- */
+  .tl{position:relative;margin-left:6px;}
+  .tl::before{content:"";position:absolute;left:6px;top:6px;bottom:6px;width:2px;background:var(--line);}
+  .tl-item{position:relative;padding:0 0 30px 34px;}
+  .tl-item:last-child{padding-bottom:0;}
+  .tl-item::before{
+    content:"";position:absolute;left:0;top:6px;width:14px;height:14px;border-radius:50%;
+    background:var(--surface);border:2px solid var(--line-strong);
+  }
+  .tl-item.now::before{border-color:var(--root);background:var(--root-soft);box-shadow:0 0 0 4px var(--root-soft);}
+  .tl-role{font-family:var(--display);font-weight:600;font-size:1.06rem;color:var(--ink);letter-spacing:-.01em;line-height:1.35;}
+  .tl-meta{font-family:var(--mono);font-size:.74rem;color:var(--graphite);margin-top:7px;letter-spacing:.02em;display:flex;flex-wrap:wrap;gap:6px 14px;}
+  .tl-meta .sep{color:var(--line-strong);}
+
+  /* ---------- PUBLICATIONS ---------- */
+  .pub-group{margin-bottom:40px;}
+  .pub-group:last-child{margin-bottom:0;}
+  .pub-eyebrow{
+    display:flex;align-items:center;gap:12px;margin:0 0 18px;
+    font-family:var(--mono);font-size:.74rem;letter-spacing:.14em;text-transform:uppercase;color:var(--graphite);
+  }
+  .pub-eyebrow .count{color:var(--graphite-soft);}
+  .pub-eyebrow::after{content:"";flex:1;height:1px;background:var(--line);}
+  .pub{
+    display:flex;gap:16px;padding:18px 0;border-top:1px solid var(--line);
+  }
+  .pub:first-of-type{border-top:none;}
+  .tag{
+    flex:0 0 auto;align-self:flex-start;margin-top:3px;
+    font-family:var(--mono);font-size:.62rem;letter-spacing:.08em;text-transform:uppercase;
+    padding:4px 9px;border-radius:6px;white-space:nowrap;font-weight:500;
+  }
+  .tag.q1{background:var(--root);color:#fff;}
+  .tag.q2{background:var(--root-soft);color:var(--root);border:1px solid #E9CE9B;}
+  .tag.acc{background:var(--indigo-soft);color:var(--indigo);}
+  .tag.conf{background:#0E1631;color:#c8d0ef;}
+  .tag.rev{background:var(--surface);color:var(--graphite);border:1px solid var(--line-strong);}
+  .pub-body{flex:1;min-width:0;}
+  .pub-title{font-family:var(--serif);font-weight:500;font-size:1.08rem;line-height:1.42;color:var(--ink);}
+  .pub-venue{font-size:.98rem;color:var(--graphite);margin-top:4px;font-style:italic;}
+  .pub-venue a{font-style:normal;}
+  .pub-venue .venue-name{color:#33405c;}
+  .doi{font-family:var(--mono);font-size:.76rem;font-style:normal;}
+
+  /* ---------- PROJECTS ---------- */
+  .proj{
+    background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:28px;
+    box-shadow:var(--shadow);display:flex;flex-direction:column;gap:14px;
+  }
+  .proj h3{font-family:var(--display);font-weight:600;font-size:1.16rem;margin:0;letter-spacing:-.01em;color:var(--ink);}
+  .proj p{margin:0;color:#2a3650;font-size:1.02rem;}
+  .proj-link{align-self:flex-start;}
+
+  /* ---------- CARDS GRID (certs/awards/edu/lang) ---------- */
+  .duo{display:grid;grid-template-columns:1.35fr 1fr;gap:26px;}
+  @media(max-width:760px){ .duo{grid-template-columns:1fr;} }
+  .mini{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:24px;box-shadow:var(--shadow);height:100%;}
+  .mini h3{font-family:var(--mono);font-size:.72rem;letter-spacing:.14em;text-transform:uppercase;color:var(--graphite);margin:0 0 16px;}
+  .list{list-style:none;padding:0;margin:0;}
+  .list li{padding:11px 0;border-top:1px solid var(--line);font-size:1rem;color:#2a3650;}
+  .list li:first-child{border-top:none;padding-top:0;}
+  .list li .src{font-family:var(--mono);font-size:.72rem;color:var(--graphite-soft);display:block;margin-top:3px;letter-spacing:.02em;}
+  .edu-degree{font-family:var(--display);font-weight:600;font-size:1.12rem;color:var(--ink);letter-spacing:-.01em;}
+  .edu-line{font-size:1rem;color:var(--graphite);margin-top:6px;}
+  .cgpa{display:inline-flex;align-items:baseline;gap:8px;margin-top:16px;padding:10px 15px;border-radius:10px;background:var(--paper);border:1px solid var(--line);}
+  .cgpa .v{font-family:var(--display);font-weight:600;font-size:1.5rem;color:var(--root);}
+  .cgpa .k{font-family:var(--mono);font-size:.7rem;letter-spacing:.1em;text-transform:uppercase;color:var(--graphite);}
+  .lang-row{display:flex;justify-content:space-between;align-items:center;padding:12px 0;border-top:1px solid var(--line);}
+  .lang-row:first-of-type{border-top:none;}
+  .lang-row .l{font-family:var(--display);font-weight:500;color:var(--ink);}
+  .lang-row .lv{font-family:var(--mono);font-size:.74rem;color:var(--graphite);letter-spacing:.04em;}
+  .award{display:flex;gap:14px;align-items:flex-start;}
+  .award .medal{font-family:var(--display);font-weight:700;font-size:1.5rem;color:var(--root);line-height:1;}
+
+  /* ---------- FOOTER ---------- */
+  .foot{background:var(--hero-bg);color:var(--hero-ink);padding:70px 0 46px;}
+  .foot-cta{font-family:var(--display);font-weight:600;font-size:clamp(1.5rem,4vw,2.4rem);letter-spacing:-.02em;color:#fff;margin:0 0 8px;line-height:1.1;}
+  .foot-sub{color:var(--hero-sub);font-size:1.05rem;margin:0 0 26px;max-width:48ch;}
+  .foot-links{display:flex;flex-wrap:wrap;gap:12px;}
+  .foot-links a{
+    font-family:var(--mono);font-size:.8rem;color:var(--hero-ink);text-decoration:none;
+    border:1px solid rgba(255,255,255,.18);border-radius:999px;padding:10px 16px;transition:all .18s ease;
+  }
+  .foot-links a:hover{border-color:rgba(255,255,255,.5);background:rgba(255,255,255,.06);}
+  .foot-base{
+    margin-top:44px;padding-top:22px;border-top:1px solid rgba(255,255,255,.1);
+    display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px;
+    font-family:var(--mono);font-size:.72rem;color:var(--hero-sub);letter-spacing:.04em;
+  }
+
+  /* reveal */
+  .reveal{opacity:0;transform:translateY(14px);transition:opacity .7s ease, transform .7s ease;}
+  .reveal.in{opacity:1;transform:none;}
+  @media(prefers-reduced-motion:reduce){
+    .reveal{opacity:1;transform:none;transition:none;}
+    html{scroll-behavior:auto;}
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="nav" id="nav">
+  <div class="nav-inner">
+    <div class="nav-name">Md. Asadujjaman Miah <span>/ Applied Mathematics</span></div>
+    <div class="nav-links">
+      <a href="#about">About</a>
+      <a href="#research">Research</a>
+      <a href="#publications">Publications</a>
+      <a href="#projects">Projects</a>
+      <a class="cv" href="Md_Asadujjaman_Miah_CV.pdf" target="_blank" rel="noopener">CV ↓</a>
+    </div>
+  </div>
+</nav>
+
+<!-- HERO -->
+<header class="hero">
+  <canvas id="plot"></canvas>
+  <div class="hero-veil"></div>
+  <div class="hero-inner">
+    <p class="eyebrow"><span class="tick"></span>Applied Mathematics · University of Dhaka</p>
+    <h1>Md. Asadujjaman<br>Miah</h1>
+    <p class="lede">I build numerical methods that <em>converge</em> — derivative-free root-finding algorithms, physics-informed neural networks, and integral-equation solvers with <em>guaranteed precision</em>.</p>
+    <div class="hero-actions">
+      <a class="btn primary" href="Md_Asadujjaman_Miah_CV.pdf" target="_blank" rel="noopener">Download CV ↓</a>
+      <a class="btn" href="mailto:sifata425@gmail.com">Email</a>
+      <a class="btn" href="https://scholar.google.com/scholar?q=Md.+Asadujjaman+Miah" target="_blank" rel="noopener">Google Scholar</a>
+      <a class="btn" href="https://github.com/asadujjaman420" target="_blank" rel="noopener">GitHub</a>
+      <a class="btn" href="https://www.linkedin.com/in/md-asadujjaman-miah-b12214217/" target="_blank" rel="noopener">LinkedIn</a>
+    </div>
+    <div class="hero-stats">
+      <div class="stat"><div class="num">9<span class="accent">+</span></div><div class="lab">Papers authored</div></div>
+      <div class="stat"><div class="num">Q1 <span class="accent">·</span> Q2</div><div class="lab">Indexed journals</div></div>
+      <div class="stat"><div class="num">2</div><div class="lab">Intl. conferences</div></div>
+      <div class="stat"><div class="num">OIST<span class="accent">·</span>TUD</div><div class="lab">Collaborations</div></div>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <!-- ABOUT -->
+  <section class="block" id="about">
+    <div class="sec-head reveal"><span class="sec-num">01</span><h2 class="sec-title">About</h2></div>
+    <div class="prose reveal">
+      <p>I'm a final-year <strong>Applied Mathematics</strong> student at the University of Dhaka, working at the intersection of classical numerical analysis and scientific machine learning. My work starts from a simple obsession: methods should not only reach the right answer, they should let you <strong>prove</strong> how many digits of that answer you can trust.</p>
+      <p>I developed two novel derivative-free root-finding formulas — the <strong>Perpendicular</strong> and <strong>Extended Secant</strong> methods — now published in a Q1 Elsevier journal with stochastic <strong>CESTAC / CADNA</strong> validation. Alongside this, I work on <strong>physics-informed neural networks</strong> and the <strong>Homotopy Analysis Method</strong> for Volterra and Hammerstein integral equations with discontinuous kernels, as well as mathematical modeling of eco-epidemiological and supply–demand systems.</p>
+      <p>I currently collaborate as a remote contributor with the Numerical Analysis group at <strong>TU Delft</strong> and intern with <strong>OIST</strong> on moment-based population dynamics.</p>
+    </div>
+  </section>
+
+  <!-- SKILLS -->
+  <section class="block" id="skills">
+    <div class="sec-head reveal"><span class="sec-num">02</span><h2 class="sec-title">Fields &amp; Tools</h2></div>
+    <div class="skill-grid">
+      <div class="skill-card reveal">
+        <h3>Research Fields</h3>
+        <div class="chips">
+          <span class="chip">Optimization</span>
+          <span class="chip">Numerical Methods</span>
+          <span class="chip">Machine Learning</span>
+          <span class="chip">Neural Networks</span>
+          <span class="chip">Mathematical Modeling</span>
+          <span class="chip">PINNs</span>
+          <span class="chip">Integral Equations</span>
+          <span class="chip">Root-Finding</span>
+        </div>
+      </div>
+      <div class="skill-card reveal">
+        <h3>Programming &amp; Software</h3>
+        <div class="chips">
+          <span class="chip code">Python</span>
+          <span class="chip code">MATLAB</span>
+          <span class="chip code">COMSOL</span>
+          <span class="chip code">FORTRAN</span>
+          <span class="chip code">Mathematica</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- RESEARCH -->
+  <section class="block" id="research">
+    <div class="sec-head reveal"><span class="sec-num">03</span><h2 class="sec-title">Research Experience</h2></div>
+    <div class="tl reveal">
+      <div class="tl-item now">
+        <div class="tl-role">Intern — Comparing Individual-Based Deterministic and Stochastic Models in Moment-Based Dynamics</div>
+        <div class="tl-meta"><span>OIST — Okinawa Institute of Science and Technology</span></div>
+      </div>
+      <div class="tl-item now">
+        <div class="tl-role">Remote Contributor — Comparing Physics-Informed RaNNs and Physics-Informed Neural Networks</div>
+        <div class="tl-meta"><a href="https://www.tudelft.nl/ewi/over-de-faculteit/afdelingen/applied-mathematics/numerical-analysis" target="_blank" rel="noopener">Numerical Analysis Group, TU Delft</a></div>
+      </div>
+      <div class="tl-item now">
+        <div class="tl-role">Stochastic &amp; standard Volterra integral equations with discontinuous kernels, solved via neural networks</div>
+        <div class="tl-meta"><span>Supervisor: <a href="https://scholar.google.com/citations?hl=en&user=E_or4dYAAAAJ&view_op=list_works&sortby=pubdate" target="_blank" rel="noopener">Dr. Samad Noeiaghdam</a></span><span class="sep">/</span><span>Jan 2025 – Present</span></div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-role">Designing an efficient numerical root-finding algorithm for transcendental equations</div>
+        <div class="tl-meta"><span>Supervisor: <a href="https://scholar.google.com/citations?view_op=list_works&hl=en&user=vyJNFeUAAAAJ&sortby=pubdate" target="_blank" rel="noopener">Md. Shorif Hossan</a></span><span class="sep">/</span><span>Oct 2023 – Nov 2024</span></div>
+      </div>
+      <div class="tl-item now">
+        <div class="tl-role">Final-year project — Behaviour of meteorological parameters over the Rajshahi region via statistical &amp; numerical methods</div>
+        <div class="tl-meta"><span>Supervisor: <a href="https://scholar.google.com/citations?user=BQ6g_wYAAAAJ&hl=en" target="_blank" rel="noopener">Dr. M. A. Samad</a></span><span class="sep">/</span><span>Jan 2025 – Present</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PUBLICATIONS -->
+  <section class="block" id="publications">
+    <div class="sec-head reveal"><span class="sec-num">04</span><h2 class="sec-title">Publications &amp; Talks</h2></div>
+
+    <div class="pub-group reveal">
+      <p class="pub-eyebrow">Published <span class="count">— 2</span></p>
+      <div class="pub">
+        <span class="tag q1">Q1 · Elsevier</span>
+        <div class="pub-body">
+          <div class="pub-title">Derivative-Free Root-Finding Algorithms: Perpendicular and Extended Secant Methods with CESTAC Validation</div>
+          <div class="pub-venue"><span class="venue-name">Applied Mathematics and Computation</span> · <a class="doi" href="https://doi.org/10.1016/j.amc.2026.130053" target="_blank" rel="noopener">doi:10.1016/j.amc.2026.130053</a></div>
+        </div>
+      </div>
+      <div class="pub">
+        <span class="tag q2">Q2 · MDPI</span>
+        <div class="pub-body">
+          <div class="pub-title">Root-finding project — indexed in Scopus &amp; Web of Science</div>
+          <div class="pub-venue"><span class="venue-name">Axioms</span> (MDPI), Applied Mathematics · <a href="https://www.mdpi.com/2075-1680/14/10/726" target="_blank" rel="noopener">View publication ↗</a></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="pub-group reveal">
+      <p class="pub-eyebrow">Accepted <span class="count">— 1</span></p>
+      <div class="pub">
+        <span class="tag acc">Accepted</span>
+        <div class="pub-body">
+          <div class="pub-title">Hybrid HAM–Neural Network Framework for Nonlinear Functional Hammerstein Integral Equations with CESTAC Validation</div>
+          <div class="pub-venue"><span class="venue-name">Journal of Integral Equations and Applications</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="pub-group reveal">
+      <p class="pub-eyebrow">Conference Presentations <span class="count">— 2</span></p>
+      <div class="pub">
+        <span class="tag conf">DYSC 2025</span>
+        <div class="pub-body">
+          <div class="pub-title">Homotopy Analysis Method and Physics-Informed Neural Networks for Solving Volterra Integral Equations with Discontinuous Kernels</div>
+          <div class="pub-venue">7th International Conference DYSC 2025, Irkutsk, Russia · <a href="https://math.isu.ru/export/sites/math/ru/conference/2025/.galleries/docs/Program_DYSC_2025.pdf" target="_blank" rel="noopener">Programme ↗</a></div>
+        </div>
+      </div>
+      <div class="pub">
+        <span class="tag conf">GAMM 2026</span>
+        <div class="pub-body">
+          <div class="pub-title">Novel Algorithms for Nonlinear Root-Finding: Perpendicular and Extended Secant Methods with CADNA Implementation</div>
+          <div class="pub-venue">Accepted for oral presentation — GAMM 2026 Annual Meeting</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="pub-group reveal">
+      <p class="pub-eyebrow">Under Review <span class="count">— 6</span></p>
+      <div class="pub">
+        <span class="tag rev">In review</span>
+        <div class="pub-body">
+          <div class="pub-title">Regularization and Neural Correction in the Homotopy Analysis Framework for First-Kind Volterra Integral Equations with Discontinuous Kernel</div>
+          <div class="pub-venue"><span class="venue-name">Bulletin of Irkutsk State University, Series Mathematics</span></div>
+        </div>
+      </div>
+      <div class="pub">
+        <span class="tag rev">In review</span>
+        <div class="pub-body">
+          <div class="pub-title">Precision-Guaranteed Computation for Functional Volterra Integral Equations: Integrating ADM, Aitken Acceleration, and Stochastic Validation</div>
+          <div class="pub-venue"><span class="venue-name">Journal of Computational Mathematics</span></div>
+        </div>
+      </div>
+      <div class="pub">
+        <span class="tag rev">In review</span>
+        <div class="pub-body">
+          <div class="pub-title">Fractional-Order Supply–Demand Model via Physics-Informed Neural Networks</div>
+        </div>
+      </div>
+      <div class="pub">
+        <span class="tag rev">In review</span>
+        <div class="pub-body">
+          <div class="pub-title">Statistical Assessment of Wind Energy Potential in Bangladesh: Weibull and Rayleigh Distribution Analysis</div>
+        </div>
+      </div>
+      <div class="pub">
+        <span class="tag rev">In review</span>
+        <div class="pub-body">
+          <div class="pub-title">Stochastic Analysis of Control-Parameter Influences in an Eco-Epidemiological Model with Predator Infection</div>
+          <div class="pub-venue"><span class="venue-name">Scientific Reports</span></div>
+        </div>
+      </div>
+      <div class="pub">
+        <span class="tag rev">In review</span>
+        <div class="pub-body">
+          <div class="pub-title">Predicting Risky Areas Due to Subsidence Using Ensemble-Based Machine Learning in the Barapukuria Coal Mine</div>
+          <div class="pub-venue"><span class="venue-name">Mining, Metallurgy &amp; Exploration</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PROJECTS -->
+  <section class="block" id="projects">
+    <div class="sec-head reveal"><span class="sec-num">05</span><h2 class="sec-title">Selected Project</h2></div>
+    <div class="proj reveal">
+      <h3>Scientific ML — recovering ground truth from noisy data</h3>
+      <p>Generating synthetic data from a known function by injecting noise, then using scientific machine learning to recover the underlying ground-truth signal — a hands-on study of how PINNs and data-driven models behave under uncertainty.</p>
+      <a class="btn primary proj-link" href="https://github.com/asadujjaman420/Sci-ML-Project/blob/main/PINNs.ipynb" target="_blank" rel="noopener" style="color:#0B1226;">View notebook on GitHub ↗</a>
+    </div>
+  </section>
+
+  <!-- CERTS + AWARDS -->
+  <section class="block" id="more">
+    <div class="sec-head reveal"><span class="sec-num">06</span><h2 class="sec-title">Certifications &amp; Awards</h2></div>
+    <div class="duo">
+      <div class="mini reveal">
+        <h3>Certifications</h3>
+        <ul class="list">
+          <li>Supervised Machine Learning: Regression &amp; Classification
+            <span class="src">DeepLearning.AI · Stanford · <a href="https://www.coursera.org/account/accomplishments/verify/D824AKRCITID" target="_blank" rel="noopener">verify ↗</a></span>
+          </li>
+          <li>Advanced Learning Algorithms
+            <span class="src">DeepLearning.AI · Stanford · <a href="https://www.coursera.org/account/accomplishments/verify/KL032JFG16TQ" target="_blank" rel="noopener">verify ↗</a></span>
+          </li>
+          <li>Intro to Machine Learning
+            <span class="src">Kaggle · <a href="https://www.kaggle.com/learn/certification/mdasadujjamanmiah425/intro-to-machine-learning" target="_blank" rel="noopener">verify ↗</a></span>
+          </li>
+        </ul>
+      </div>
+      <div class="mini reveal">
+        <h3>Awards</h3>
+        <div class="award">
+          <span class="medal">2nd</span>
+          <div>
+            <div style="font-family:var(--display);font-weight:600;color:var(--ink);">International Day of Mathematics Olympiad</div>
+            <div class="mono" style="font-size:.74rem;color:var(--graphite);margin-top:6px;letter-spacing:.03em;">Undergraduate Level · Runner-up</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- EDUCATION + LANGUAGES -->
+  <section class="block" id="education">
+    <div class="sec-head reveal"><span class="sec-num">07</span><h2 class="sec-title">Education &amp; Languages</h2></div>
+    <div class="duo">
+      <div class="mini reveal">
+        <h3>Education</h3>
+        <div class="edu-degree">B.Sc. in Applied Mathematics</div>
+        <div class="edu-line">University of Dhaka, Bangladesh · Jan 2022 – Present</div>
+        <div class="cgpa"><span class="v">3.68</span><span class="k">Current CGPA</span></div>
+      </div>
+      <div class="mini reveal">
+        <h3>Languages</h3>
+        <div class="lang-row"><span class="l">English</span><span class="lv">Professional</span></div>
+        <div class="lang-row"><span class="l">Bangla</span><span class="lv">Native</span></div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<!-- FOOTER -->
+<footer class="foot" id="contact">
+  <div class="wrap">
+    <p class="foot-cta">Let's talk numerical methods.</p>
+    <p class="foot-sub">Open to PhD positions, research collaborations, and problems where precision has to be proven, not assumed.</p>
+    <div class="foot-links">
+      <a href="mailto:sifata425@gmail.com">sifata425@gmail.com</a>
+      <a href="tel:+8801402394778">+880 1402 394778</a>
+      <a href="https://scholar.google.com/scholar?q=Md.+Asadujjaman+Miah" target="_blank" rel="noopener">Google Scholar</a>
+      <a href="https://github.com/asadujjaman420" target="_blank" rel="noopener">GitHub</a>
+      <a href="https://www.linkedin.com/in/md-asadujjaman-miah-b12214217/" target="_blank" rel="noopener">LinkedIn</a>
+      <a href="Md_Asadujjaman_Miah_CV.pdf" target="_blank" rel="noopener">Download CV ↓</a>
+    </div>
+    <div class="foot-base">
+      <span>© <span id="yr"></span> Md. Asadujjaman Miah</span>
+      <span>Built around the secant method · x³ − 2x − 5 = 0</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+  document.getElementById('yr').textContent = new Date().getFullYear();
+
+  // sticky nav border
+  const nav = document.getElementById('nav');
+  const onScroll = () => nav.classList.toggle('stuck', window.scrollY > 12);
+  onScroll(); window.addEventListener('scroll', onScroll, {passive:true});
+
+  // scroll reveal
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if(!reduce){
+    const io = new IntersectionObserver((entries)=>{
+      entries.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target);} });
+    }, {threshold:0.12, rootMargin:'0px 0px -8% 0px'});
+    document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
+  } else {
+    document.querySelectorAll('.reveal').forEach(el=>el.classList.add('in'));
+  }
+
+  // ---- Hero: secant-method convergence on f(x) = x^3 - 2x - 5 ----
+  (function(){
+    const canvas = document.getElementById('plot');
+    const ctx = canvas.getContext('2d');
+    const f = x => x*x*x - 2*x - 5;         // root ~ 2.0945514815
+    const ROOT = 2.0945514815;
+    const X0 = 3.0, X1 = 1.5;               // seeds -> smooth convergence
+    const domain = [0.55, 3.35];
+    let W=0, H=0, dpr=1;
+    const css = getComputedStyle(document.documentElement);
+    const CURVE = (css.getPropertyValue('--hero-curve')||'#7C86FF').trim();
+    const AMBER = (css.getPropertyValue('--hero-root')||'#F2B24C').trim();
+    const GRID  = 'rgba(255,255,255,0.06)';
+    const AXIS  = 'rgba(255,255,255,0.16)';
+
+    function resize(){
+      dpr = Math.min(window.devicePixelRatio||1, 2);
+      W = canvas.clientWidth; H = canvas.clientHeight;
+      canvas.width = Math.floor(W*dpr); canvas.height = Math.floor(H*dpr);
+      ctx.setTransform(dpr,0,0,dpr,0,0);
+      computeView();
+    }
+
+    let view;
+    function computeView(){
+      // sample to find y-range in domain
+      let ymin=Infinity, ymax=-Infinity;
+      for(let i=0;i<=200;i++){
+        const x = domain[0] + (domain[1]-domain[0])*i/200;
+        const y = f(x); if(y<ymin)ymin=y; if(y>ymax)ymax=y;
+      }
+      const padY=(ymax-ymin)*0.14; ymin-=padY; ymax+=padY;
+      // anchor plot to lower-right of hero so it sits behind text nicely
+      const plotLeft = W*0.30, plotRight = W - 10;
+      const plotTop = H*0.10, plotBottom = H - 8;
+      view = {ymin,ymax,plotLeft,plotRight,plotTop,plotBottom};
+    }
+    const sx = x => view.plotLeft + (x-domain[0])/(domain[1]-domain[0])*(view.plotRight-view.plotLeft);
+    const sy = y => view.plotBottom - (y-view.ymin)/(view.ymax-view.ymin)*(view.plotBottom-view.plotTop);
+
+    function drawGrid(){
+      ctx.lineWidth=1; ctx.strokeStyle=GRID;
+      for(let gx=Math.ceil(domain[0]); gx<=Math.floor(domain[1]); gx++){
+        ctx.beginPath(); ctx.moveTo(sx(gx),view.plotTop); ctx.lineTo(sx(gx),view.plotBottom); ctx.stroke();
+      }
+      const yStart=Math.ceil(view.ymin/5)*5;
+      for(let gy=yStart; gy<=view.ymax; gy+=5){
+        ctx.beginPath(); ctx.moveTo(view.plotLeft,sy(gy)); ctx.lineTo(view.plotRight,sy(gy)); ctx.stroke();
+      }
+      // x-axis (y=0)
+      if(view.ymin<0 && view.ymax>0){
+        ctx.strokeStyle=AXIS; ctx.lineWidth=1.4;
+        ctx.beginPath(); ctx.moveTo(view.plotLeft,sy(0)); ctx.lineTo(view.plotRight,sy(0)); ctx.stroke();
+      }
+    }
+    function drawCurve(){
+      ctx.beginPath();
+      for(let i=0;i<=240;i++){
+        const x=domain[0]+(domain[1]-domain[0])*i/240;
+        const px=sx(x), py=sy(f(x));
+        i===0?ctx.moveTo(px,py):ctx.lineTo(px,py);
+      }
+      ctx.strokeStyle=CURVE; ctx.lineWidth=2.4; ctx.lineJoin='round';
+      ctx.shadowColor='rgba(124,134,255,.45)'; ctx.shadowBlur=12;
+      ctx.stroke(); ctx.shadowBlur=0;
+    }
+    function dot(x,y,r,color){ ctx.beginPath(); ctx.arc(sx(x),sy(y),r,0,Math.PI*2); ctx.fillStyle=color; ctx.fill(); }
+
+    // build secant iterate sequence
+    function buildSteps(){
+      const xs=[X0,X1]; 
+      for(let k=1;k<8;k++){
+        const a=xs[k-1], b=xs[k], fa=f(a), fb=f(b);
+        if(Math.abs(fb-fa)<1e-12) break;
+        const c=b-fb*(b-a)/(fb-fa);
+        xs.push(c);
+        if(Math.abs(c-ROOT)<1e-4) break;
+      }
+      return xs;
+    }
+    const steps = buildSteps();
+
+    // animation state
+    let phase=0;            // index of current secant line being drawn
+    let t0=null;
+    const STEP_MS=1050, HOLD_MS=2400, FADE_MS=900;
+
+    function drawSecant(a,b,alpha){
+      ctx.globalAlpha=alpha;
+      const fa=f(a), fb=f(b);
+      // chord extended a touch
+      ctx.beginPath();
+      ctx.moveTo(sx(a),sy(fa)); ctx.lineTo(sx(b),sy(fb));
+      // continue to axis crossing
+      if(Math.abs(fb-fa)>1e-12){
+        const c=b-fb*(b-a)/(fb-fa);
+        ctx.lineTo(sx(c),sy(0));
+      }
+      ctx.strokeStyle='rgba(234,238,249,0.55)'; ctx.lineWidth=1.3;
+      ctx.setLineDash([5,4]); ctx.stroke(); ctx.setLineDash([]);
+      dot(a,fa,3.2,'rgba(234,238,249,0.85)');
+      dot(b,fb,3.2,'rgba(234,238,249,0.85)');
+      ctx.globalAlpha=1;
+    }
+
+    function frame(ts){
+      if(t0===null) t0=ts;
+      const elapsed=ts-t0;
+      ctx.clearRect(0,0,W,H);
+      drawGrid(); drawCurve();
+
+      const totalDraw=(steps.length-2)*STEP_MS;
+      let done=false;
+
+      if(elapsed < totalDraw){
+        const idx=Math.floor(elapsed/STEP_MS);
+        const local=(elapsed%STEP_MS)/STEP_MS;
+        // completed secants faint
+        for(let i=0;i<idx;i++){ drawSecant(steps[i],steps[i+1], 0.28); }
+        // current secant fades in
+        drawSecant(steps[idx],steps[idx+1], Math.min(1,local*1.6));
+        // iterate markers on axis
+        for(let i=2;i<=idx+2 && i<steps.length;i++){ dot(steps[i],0,3.4,'rgba(124,134,255,0.9)'); }
+      } else {
+        // converged: hold, pulse root, then fade & restart
+        const after=elapsed-totalDraw;
+        for(let i=0;i<steps.length-1;i++){ drawSecant(steps[i],steps[i+1], 0.16); }
+        const pulse=1+0.35*Math.sin(after/230);
+        // glow
+        ctx.beginPath(); ctx.arc(sx(ROOT),sy(0),9*pulse,0,Math.PI*2);
+        ctx.fillStyle='rgba(242,178,76,0.18)'; ctx.fill();
+        dot(ROOT,0,5.2,AMBER);
+        // label
+        ctx.font='500 12px "IBM Plex Mono", monospace';
+        ctx.fillStyle='rgba(242,178,76,0.95)';
+        ctx.textAlign='center';
+        ctx.fillText('x* ≈ 2.0946', sx(ROOT), sy(0)+24);
+        if(after > HOLD_MS+FADE_MS){ done=true; }
+      }
+
+      if(done){ t0=null; requestAnimationFrame(frame); }
+      else requestAnimationFrame(frame);
+    }
+
+    function staticConverged(){
+      ctx.clearRect(0,0,W,H);
+      drawGrid(); drawCurve();
+      for(let i=0;i<steps.length-1;i++){ drawSecant(steps[i],steps[i+1], 0.3); }
+      dot(ROOT,0,5.2,AMBER);
+      ctx.font='500 12px "IBM Plex Mono", monospace';
+      ctx.fillStyle='rgba(242,178,76,0.95)'; ctx.textAlign='center';
+      ctx.fillText('x* ≈ 2.0946', sx(ROOT), sy(0)+24);
+    }
+
+    function start(){ resize(); if(reduce){ staticConverged(); } else { requestAnimationFrame(frame); } }
+    let rt;
+    window.addEventListener('resize', ()=>{ clearTimeout(rt); rt=setTimeout(()=>{ resize(); if(reduce) staticConverged(); }, 150); });
+
+    if(document.fonts && document.fonts.ready){ document.fonts.ready.then(start).catch(start); }
+    else start();
+    // ensure it runs even if fonts hang
+    setTimeout(()=>{ if(!view) start(); }, 400);
+  })();
+</script>
+</body>
+</html>
